@@ -4,8 +4,11 @@ import { NextResponse } from "next/server";
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!;
 
 async function getSheets() {
-  const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT!);
-  credentials.private_key = credentials.private_key.replace(/\\n/g, "\n");
+  const raw = process.env.GOOGLE_SERVICE_ACCOUNT!;
+  const credentials = JSON.parse(raw);
+  credentials.private_key = credentials.private_key
+    .replace(/\\n/g, "\n")
+    .replace(/\r/g, "");
   const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
@@ -79,7 +82,7 @@ export async function GET(req: Request) {
     }));
     return NextResponse.json({ employees });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    return NextResponse.json({ error: String(e), sheetId: process.env.GOOGLE_SHEET_ID, hasAccount: !!process.env.GOOGLE_SERVICE_ACCOUNT }, { status: 500 });
   }
 }
 
