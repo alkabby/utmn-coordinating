@@ -2,7 +2,6 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
-type Shift = { date: string; exitTime: string };
 
 const TODAY = new Date().toISOString().split("T")[0];
 
@@ -17,7 +16,6 @@ function EmployeeContent() {
   const [exitTime, setExitTime] = useState<"4:00" | "5:00" | "">("");
   const [exitSaved, setExitSaved] = useState(false);
 
-  const [schedule, setSchedule] = useState<Shift[]>([]);
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
@@ -50,9 +48,6 @@ function EmployeeContent() {
         }
       });
 
-    fetch(`/api/sheets?employee=${encodeURIComponent(name)}`)
-      .then((r) => r.json())
-      .then((d) => setSchedule(d.schedule || []));
   }, [name]);
 
   const saveAttendance = async () => {
@@ -195,33 +190,6 @@ function EmployeeContent() {
           </div>
         )}
 
-        {/* الورديات السابقة */}
-        {schedule.length > 0 && (
-          <div className="bg-gray-800 rounded-2xl p-5">
-            <h2 className="text-white font-bold text-lg mb-4">ورديات سابقة</h2>
-            <div className="flex flex-col gap-2">
-              {schedule
-                .sort((a, b) => (a.date > b.date ? -1 : 1))
-                .map((s, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between items-center bg-gray-700 rounded-xl px-4 py-3"
-                  >
-                    <span className="text-gray-300 text-sm">{s.date}</span>
-                    <span
-                      className={`text-sm font-bold px-3 py-1 rounded-lg ${
-                        s.exitTime === "4:00"
-                          ? "bg-blue-600 text-white"
-                          : "bg-orange-600 text-white"
-                      }`}
-                    >
-                      {s.exitTime}
-                    </span>
-                  </div>
-                ))}
-            </div>
-          </div>
-        )}
 
       </div>
     </main>
