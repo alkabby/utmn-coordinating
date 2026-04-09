@@ -12,6 +12,7 @@ function EmployeeContent() {
   const [attendance, setAttendance] = useState<"حاضر" | "مستأذن" | "غائب" | "">("");
   const [reason, setReason] = useState("");
   const [attendanceSaved, setAttendanceSaved] = useState(false);
+  const [attendanceTime, setAttendanceTime] = useState("");
 
   const [exitTime, setExitTime] = useState<"4:00" | "5:00" | "">("");
   const [exitSaved, setExitSaved] = useState(false);
@@ -32,6 +33,10 @@ function EmployeeContent() {
           setAttendance(mine.status);
           setReason(mine.reason || "");
           setAttendanceSaved(true);
+          if (mine.timestamp) {
+            const t = new Date(Number(mine.timestamp));
+            setAttendanceTime(`${t.getHours()}:${String(t.getMinutes()).padStart(2, "0")}`);
+          }
         }
       });
 
@@ -65,6 +70,8 @@ function EmployeeContent() {
       }),
     });
     setAttendanceSaved(true);
+    const now = new Date();
+    setAttendanceTime(`${now.getHours()}:${String(now.getMinutes()).padStart(2, "0")}`);
     showMsg("تم تسجيل الحضور");
   };
 
@@ -105,7 +112,7 @@ function EmployeeContent() {
             حضور اليوم
             {attendanceSaved && (
               <span className="text-xs text-green-400 font-normal mr-2">
-                (مسجّل - يمكنك التعديل)
+                (مسجّل{attendanceTime ? ` الساعة ${attendanceTime}` : ""} - يمكنك التعديل)
               </span>
             )}
           </h2>
