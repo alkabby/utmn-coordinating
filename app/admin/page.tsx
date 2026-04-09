@@ -2,20 +2,9 @@
 import { useEffect, useState, useCallback } from "react";
 
 type Employee = { id: string; name: string; status: string };
-type AttendanceRow = {
-  employeeName: string;
-  status: string;
-  reason: string;
-  timestamp: string;
-};
+type AttendanceRow = { employeeName: string; status: string; reason: string; timestamp: string };
 type ExitRow = { employeeName: string; exitTime: string };
-
-type EmployeeStatus = {
-  name: string;
-  attendance: string;
-  reason: string;
-  exitTime: string;
-};
+type EmployeeStatus = { name: string; attendance: string; reason: string; exitTime: string };
 
 const TODAY = new Date().toISOString().split("T")[0];
 
@@ -42,20 +31,18 @@ export default function AdminPage() {
       const ex = exits.find((e) => e.employeeName === emp.name);
       return {
         name: emp.name,
-        attendance: att?.status || "No report",
+        attendance: att?.status || "لم يبلّغ",
         reason: att?.reason || "",
         exitTime: ex?.exitTime || "-",
       };
     });
 
     setData(merged);
-    setLastUpdate(new Date().toLocaleTimeString("en-US"));
+    setLastUpdate(new Date().toLocaleTimeString("ar-SA"));
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    load(date);
-  }, [date, load]);
+  useEffect(() => { load(date); }, [date, load]);
 
   useEffect(() => {
     if (date !== TODAY) return;
@@ -64,47 +51,46 @@ export default function AdminPage() {
   }, [date, load]);
 
   const counts = {
-    present: data.filter((d) => d.attendance === "Present").length,
-    excused: data.filter((d) => d.attendance === "Excused").length,
-    absent: data.filter((d) => d.attendance === "Absent").length,
-    unknown: data.filter((d) => d.attendance === "No report").length,
+    present: data.filter((d) => d.attendance === "حاضر").length,
+    excused: data.filter((d) => d.attendance === "مستأذن").length,
+    absent: data.filter((d) => d.attendance === "غائب").length,
+    unknown: data.filter((d) => d.attendance === "لم يبلّغ").length,
     early: data.filter((d) => d.exitTime === "4:00").length,
     late: data.filter((d) => d.exitTime === "5:00").length,
   };
 
-  const attendanceColor = (status: string) => {
-    if (status === "Present") return "text-green-400";
-    if (status === "Excused") return "text-yellow-400";
-    if (status === "Absent") return "text-red-400";
+  const attendanceColor = (s: string) => {
+    if (s === "حاضر") return "text-green-400";
+    if (s === "مستأذن") return "text-yellow-400";
+    if (s === "غائب") return "text-red-400";
     return "text-gray-500";
   };
 
-  const attendanceBg = (status: string) => {
-    if (status === "Present") return "bg-green-900/30";
-    if (status === "Excused") return "bg-yellow-900/30";
-    if (status === "Absent") return "bg-red-900/30";
+  const attendanceBg = (s: string) => {
+    if (s === "حاضر") return "bg-green-900/30";
+    if (s === "مستأذن") return "bg-yellow-900/30";
+    if (s === "غائب") return "bg-red-900/30";
     return "";
   };
 
-  const attendanceIcon = (status: string) => {
-    if (status === "Present") return "✅ Present";
-    if (status === "Excused") return "🟡 Excused";
-    if (status === "Absent") return "❌ Absent";
-    return "❓ No report";
+  const attendanceIcon = (s: string) => {
+    if (s === "حاضر") return "✅ حاضر";
+    if (s === "مستأذن") return "🟡 مستأذن";
+    if (s === "غائب") return "❌ غائب";
+    return "❓ لم يبلّغ";
   };
 
   return (
-    <main className="min-h-screen bg-gray-900 p-4">
+    <main className="min-h-screen bg-gray-900 p-4" dir="rtl">
       <div className="max-w-2xl mx-auto space-y-4">
 
-        {/* Header */}
         <div className="bg-gray-800 rounded-2xl p-5 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Schedule Dashboard</h1>
+            <h1 className="text-2xl font-bold text-white">لوحة المنسق</h1>
             {lastUpdate && (
               <p className="text-gray-500 text-xs mt-1">
-                Last updated: {lastUpdate}
-                {date === TODAY && " (auto-refreshes every minute)"}
+                آخر تحديث: {lastUpdate}
+                {date === TODAY && " (يتحدث تلقائياً)"}
               </p>
             )}
           </div>
@@ -112,11 +98,10 @@ export default function AdminPage() {
             onClick={() => load(date)}
             className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm transition"
           >
-            Refresh
+            تحديث
           </button>
         </div>
 
-        {/* Date picker */}
         <div className="bg-gray-800 rounded-2xl p-4">
           <input
             type="date"
@@ -126,40 +111,36 @@ export default function AdminPage() {
           />
         </div>
 
-        {/* Summary */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-gray-800 rounded-2xl p-4 text-center">
             <p className="text-green-400 text-2xl font-bold">{counts.present}</p>
-            <p className="text-gray-400 text-xs mt-1">Present</p>
+            <p className="text-gray-400 text-xs mt-1">حاضر</p>
           </div>
           <div className="bg-gray-800 rounded-2xl p-4 text-center">
             <p className="text-yellow-400 text-2xl font-bold">{counts.excused}</p>
-            <p className="text-gray-400 text-xs mt-1">Excused</p>
+            <p className="text-gray-400 text-xs mt-1">مستأذن</p>
           </div>
           <div className="bg-gray-800 rounded-2xl p-4 text-center">
             <p className="text-red-400 text-2xl font-bold">{counts.absent + counts.unknown}</p>
-            <p className="text-gray-400 text-xs mt-1">Absent / No report</p>
+            <p className="text-gray-400 text-xs mt-1">غائب / لم يبلّغ</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-gray-800 rounded-2xl p-4 text-center">
             <p className="text-blue-400 text-2xl font-bold">{counts.early}</p>
-            <p className="text-gray-400 text-xs mt-1">Exit 4:00</p>
+            <p className="text-gray-400 text-xs mt-1">خروج 4:00</p>
           </div>
           <div className="bg-gray-800 rounded-2xl p-4 text-center">
             <p className="text-orange-400 text-2xl font-bold">{counts.late}</p>
-            <p className="text-gray-400 text-xs mt-1">Exit 5:00</p>
+            <p className="text-gray-400 text-xs mt-1">خروج 5:00</p>
           </div>
         </div>
 
-        {/* Employee list */}
         <div className="bg-gray-800 rounded-2xl p-5">
-          <h2 className="text-white font-bold text-lg mb-4">
-            Employees ({data.length})
-          </h2>
+          <h2 className="text-white font-bold text-lg mb-4">الموظفون ({data.length})</h2>
           {loading ? (
-            <p className="text-gray-400 text-center py-8">Loading...</p>
+            <p className="text-gray-400 text-center py-8">جاري التحميل...</p>
           ) : (
             <div className="flex flex-col gap-2">
               {data.map((emp) => (
@@ -170,23 +151,17 @@ export default function AdminPage() {
                   <div className="flex-1 min-w-0">
                     <p className="text-white font-bold text-sm">{emp.name}</p>
                     {emp.reason && (
-                      <p className="text-gray-400 text-xs truncate mt-0.5">
-                        {emp.reason}
-                      </p>
+                      <p className="text-gray-400 text-xs truncate mt-0.5">{emp.reason}</p>
                     )}
                   </div>
                   <span className={`text-sm font-bold shrink-0 ${attendanceColor(emp.attendance)}`}>
                     {attendanceIcon(emp.attendance)}
                   </span>
-                  <span
-                    className={`text-xs font-bold px-2 py-1 rounded-lg shrink-0 ${
-                      emp.exitTime === "4:00"
-                        ? "bg-blue-600 text-white"
-                        : emp.exitTime === "5:00"
-                        ? "bg-orange-600 text-white"
-                        : "bg-gray-600 text-gray-400"
-                    }`}
-                  >
+                  <span className={`text-xs font-bold px-2 py-1 rounded-lg shrink-0 ${
+                    emp.exitTime === "4:00" ? "bg-blue-600 text-white"
+                    : emp.exitTime === "5:00" ? "bg-orange-600 text-white"
+                    : "bg-gray-600 text-gray-400"
+                  }`}>
                     {emp.exitTime === "-" ? "—" : emp.exitTime}
                   </span>
                 </div>

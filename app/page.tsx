@@ -18,7 +18,7 @@ export default function Home() {
   }, []);
 
   const handleEmployee = () => {
-    if (!name.trim()) return alert("Please select your name");
+    if (!name.trim()) return alert("اختر اسمك");
     router.push(`/employee?name=${encodeURIComponent(name)}`);
   };
 
@@ -26,28 +26,28 @@ export default function Home() {
     if (adminPass === "admin123") {
       router.push("/admin");
     } else {
-      alert("Wrong password");
+      alert("كلمة المرور غلط");
     }
   };
 
   return (
-    <main className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <main className="min-h-screen bg-gray-900 flex items-center justify-center p-4" dir="rtl">
       <div className="bg-gray-800 rounded-2xl p-8 w-full max-w-md shadow-2xl">
         <h1 className="text-3xl font-bold text-white text-center mb-2">
           UTMN Coordinating System
         </h1>
-        <p className="text-gray-400 text-center mb-8">Log your status and exit time</p>
+        <p className="text-gray-400 text-center mb-8">سجّل حضورك ووقت خروجك</p>
 
         {!showAdmin ? (
           <div className="space-y-4">
             <div>
-              <label className="text-gray-300 text-sm mb-2 block">Your Name</label>
+              <label className="text-gray-300 text-sm mb-2 block">اسمك</label>
               <select
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full bg-gray-700 text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Select your name</option>
+                <option value="">اختر اسمك</option>
                 {employees.map((e) => (
                   <option key={e.id} value={e.name}>
                     {e.name}
@@ -59,20 +59,20 @@ export default function Home() {
               onClick={handleEmployee}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition"
             >
-              Sign In
+              دخول
             </button>
             <button
               onClick={() => setShowAdmin(true)}
               className="w-full bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 rounded-xl transition text-sm"
             >
-              Coordinator Login
+              دخول المنسق
             </button>
           </div>
         ) : (
           <div className="space-y-4">
             <div>
               <label className="text-gray-300 text-sm mb-2 block">
-                Coordinator Password
+                كلمة مرور المنسق
               </label>
               <input
                 type="password"
@@ -87,13 +87,13 @@ export default function Home() {
               onClick={handleAdmin}
               className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition"
             >
-              Login
+              دخول
             </button>
             <button
               onClick={() => { setShowAdmin(false); setAdminPass(""); }}
               className="w-full bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 rounded-xl transition text-sm"
             >
-              Back
+              رجوع
             </button>
           </div>
         )}

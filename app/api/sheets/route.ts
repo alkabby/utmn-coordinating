@@ -82,7 +82,7 @@ export async function GET(req: Request) {
     }));
     return NextResponse.json({ employees });
   } catch (e) {
-    return NextResponse.json({ error: String(e), sheetId: process.env.GOOGLE_SHEET_ID, hasAccount: !!process.env.GOOGLE_SERVICE_ACCOUNT }, { status: 500 });
+    return NextResponse.json({ error: String(e) }, { status: 500 });
   }
 }
 

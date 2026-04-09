@@ -10,7 +10,7 @@ function EmployeeContent() {
   const params = useSearchParams();
   const name = params.get("name") || "";
 
-  const [attendance, setAttendance] = useState<"Present" | "Excused" | "Absent" | "">("");
+  const [attendance, setAttendance] = useState<"حاضر" | "مستأذن" | "غائب" | "">("");
   const [reason, setReason] = useState("");
   const [attendanceSaved, setAttendanceSaved] = useState(false);
 
@@ -56,9 +56,9 @@ function EmployeeContent() {
   }, [name]);
 
   const saveAttendance = async () => {
-    if (!attendance) return alert("Please select your status");
-    if ((attendance === "Excused" || attendance === "Absent") && !reason.trim())
-      return alert("Please provide a reason");
+    if (!attendance) return alert("اختر حالتك");
+    if ((attendance === "مستأذن" || attendance === "غائب") && !reason.trim())
+      return alert("اكتب سبب الاستئذان");
     await fetch("/api/sheets", {
       method: "POST",
       body: JSON.stringify({
@@ -70,7 +70,7 @@ function EmployeeContent() {
       }),
     });
     setAttendanceSaved(true);
-    showMsg("Attendance saved");
+    showMsg("تم تسجيل الحضور");
   };
 
   const saveExitTime = async (time: "4:00" | "5:00") => {
@@ -85,7 +85,7 @@ function EmployeeContent() {
       }),
     });
     setExitSaved(true);
-    showMsg("Exit time saved");
+    showMsg("تم تسجيل وقت الخروج");
   };
 
   const showMsg = (text: string) => {
@@ -94,51 +94,51 @@ function EmployeeContent() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-900 p-4">
+    <main className="min-h-screen bg-gray-900 p-4" dir="rtl">
       <div className="max-w-md mx-auto space-y-4">
 
-        {/* Header */}
+        {/* الهيدر */}
         <div className="bg-gray-800 rounded-2xl p-5">
-          <p className="text-gray-400 text-sm">Welcome</p>
+          <p className="text-gray-400 text-sm">مرحبا</p>
           <h1 className="text-2xl font-bold text-white">{name}</h1>
           <p className="text-gray-500 text-xs mt-1">{TODAY}</p>
         </div>
 
-        {/* Attendance */}
+        {/* تسجيل الحضور */}
         <div className="bg-gray-800 rounded-2xl p-5">
           <h2 className="text-white font-bold text-lg mb-4">
-            Today&apos;s Attendance
+            حضور اليوم
             {attendanceSaved && (
-              <span className="text-xs text-green-400 font-normal ml-2">
-                (saved — you can update)
+              <span className="text-xs text-green-400 font-normal mr-2">
+                (مسجّل - يمكنك التعديل)
               </span>
             )}
           </h2>
           <div className="flex gap-2 mb-3">
-            {(["Present", "Excused", "Absent"] as const).map((s) => (
+            {(["حاضر", "مستأذن", "غائب"] as const).map((s) => (
               <button
                 key={s}
                 onClick={() => { setAttendance(s); setReason(""); }}
                 className={`flex-1 py-3 rounded-xl font-bold text-sm transition ${
                   attendance === s
-                    ? s === "Present"
+                    ? s === "حاضر"
                       ? "bg-green-600 text-white"
-                      : s === "Excused"
+                      : s === "مستأذن"
                       ? "bg-yellow-600 text-white"
                       : "bg-red-600 text-white"
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
               >
-                {s === "Present" ? "✅ Present" : s === "Excused" ? "🟡 Excused" : "❌ Absent"}
+                {s === "حاضر" ? "✅ حاضر" : s === "مستأذن" ? "🟡 مستأذن" : "❌ غائب"}
               </button>
             ))}
           </div>
-          {(attendance === "Excused" || attendance === "Absent") && (
+          {(attendance === "مستأذن" || attendance === "غائب") && (
             <input
               type="text"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="Enter reason..."
+              placeholder="اكتب السبب..."
               className="w-full bg-gray-700 text-white rounded-xl px-4 py-3 mb-3 outline-none focus:ring-2 focus:ring-yellow-500"
             />
           )}
@@ -146,23 +146,23 @@ function EmployeeContent() {
             onClick={saveAttendance}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition"
           >
-            {attendanceSaved ? "Update Attendance" : "Save Attendance"}
+            {attendanceSaved ? "تعديل الحضور" : "تسجيل الحضور"}
           </button>
         </div>
 
-        {/* Exit Time */}
+        {/* وقت الخروج */}
         <div className="bg-gray-800 rounded-2xl p-5">
-          <h2 className="text-white font-bold text-lg mb-1">Exit Time</h2>
+          <h2 className="text-white font-bold text-lg mb-1">وقت الخروج</h2>
           {exitSaved ? (
             <p className="text-gray-400 text-xs mb-3">
-              Current:{" "}
+              وقتك الحالي:{" "}
               <span className={`font-bold ${exitTime === "4:00" ? "text-blue-400" : "text-orange-400"}`}>
                 {exitTime}
               </span>
-              {" "}— you can change anytime
+              {" "}— يمكنك التغيير في أي وقت
             </p>
           ) : (
-            <p className="text-gray-500 text-xs mb-3">Select your exit time for today</p>
+            <p className="text-gray-500 text-xs mb-3">اختر وقت خروجك لليوم</p>
           )}
           <div className="flex gap-3">
             <button
@@ -188,17 +188,17 @@ function EmployeeContent() {
           </div>
         </div>
 
-        {/* Confirmation message */}
+        {/* رسالة تأكيد */}
         {msg && (
           <div className="bg-green-800 text-green-200 text-center py-3 rounded-xl font-bold">
             {msg}
           </div>
         )}
 
-        {/* Past shifts */}
+        {/* الورديات السابقة */}
         {schedule.length > 0 && (
           <div className="bg-gray-800 rounded-2xl p-5">
-            <h2 className="text-white font-bold text-lg mb-4">Past Shifts</h2>
+            <h2 className="text-white font-bold text-lg mb-4">ورديات سابقة</h2>
             <div className="flex flex-col gap-2">
               {schedule
                 .sort((a, b) => (a.date > b.date ? -1 : 1))
@@ -233,7 +233,7 @@ export default function EmployeePage() {
     <Suspense
       fallback={
         <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">
-          Loading...
+          جاري التحميل...
         </div>
       }
     >
