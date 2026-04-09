@@ -160,7 +160,7 @@ export default function AdminPage() {
                       <p className="text-gray-400 text-xs truncate mt-0.5">{emp.reason}</p>
                     )}
                     {emp.time && (
-                      <p className="text-gray-500 text-xs mt-0.5">سجّل الساعة {emp.time}</p>
+                      <p className="text-gray-500 text-xs mt-0.5">سجّل حضور الساعة {emp.time}</p>
                     )}
                   </div>
                   <span className={`text-sm font-bold shrink-0 ${attendanceColor(emp.attendance)}`}>
