@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 type Employee = { id: string; name: string; status: string };
 type AttendanceRow = { employeeName: string; status: string; reason: string; timestamp: string };
 type ExitRow = { employeeName: string; exitTime: string };
-type EmployeeStatus = { name: string; attendance: string; reason: string; exitTime: string };
+type EmployeeStatus = { name: string; attendance: string; reason: string; exitTime: string; time: string };
 
 const TODAY = new Date().toISOString().split("T")[0];
 
@@ -29,11 +29,17 @@ export default function AdminPage() {
     const merged: EmployeeStatus[] = employees.map((emp) => {
       const att = attendance.find((a) => a.employeeName === emp.name);
       const ex = exits.find((e) => e.employeeName === emp.name);
+      let time = "";
+      if (att?.timestamp) {
+        const t = new Date(Number(att.timestamp));
+        time = `${t.getHours()}:${String(t.getMinutes()).padStart(2, "0")}`;
+      }
       return {
         name: emp.name,
         attendance: att?.status || "لم يبلّغ",
         reason: att?.reason || "",
         exitTime: ex?.exitTime || "-",
+        time,
       };
     });
 
@@ -152,6 +158,9 @@ export default function AdminPage() {
                     <p className="text-white font-bold text-sm">{emp.name}</p>
                     {emp.reason && (
                       <p className="text-gray-400 text-xs truncate mt-0.5">{emp.reason}</p>
+                    )}
+                    {emp.time && (
+                      <p className="text-gray-500 text-xs mt-0.5">سجّل الساعة {emp.time}</p>
                     )}
                   </div>
                   <span className={`text-sm font-bold shrink-0 ${attendanceColor(emp.attendance)}`}>
