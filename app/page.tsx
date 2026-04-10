@@ -9,6 +9,18 @@ export default function Home() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [showAdmin, setShowAdmin] = useState(false);
   const [adminPass, setAdminPass] = useState("");
+  const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
+  const [showInstall, setShowInstall] = useState(false);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      setShowInstall(true);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
   const router = useRouter();
 
   useEffect(() => {
@@ -67,6 +79,17 @@ export default function Home() {
             >
               دخول المنسق
             </button>
+            {showInstall && (
+              <button
+                onClick={() => {
+                  (installPrompt as unknown as { prompt: () => void }).prompt();
+                  setShowInstall(false);
+                }}
+                className="w-full bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 rounded-xl transition text-sm flex items-center justify-center gap-2"
+              >
+                📲 إضافة التطبيق للشاشة الرئيسية
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
