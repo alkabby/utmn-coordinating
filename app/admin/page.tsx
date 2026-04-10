@@ -141,13 +141,22 @@ export default function AdminPage() {
           )}
         </div>
 
-        <div className="bg-gray-800 rounded-2xl p-4">
+        <div className="bg-gray-800 rounded-2xl p-5 flex items-center gap-3">
+          <label className="text-gray-400 text-sm shrink-0">التاريخ</label>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-gray-700 text-white rounded-xl px-4 py-3 outline-none"
+            className="flex-1 bg-gray-700 text-white rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-blue-500"
           />
+          {date !== TODAY && (
+            <button
+              onClick={() => setDate(TODAY)}
+              className="shrink-0 text-xs text-blue-400 hover:text-blue-300 transition"
+            >
+              اليوم
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-3 gap-3">
