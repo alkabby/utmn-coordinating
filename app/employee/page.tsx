@@ -17,6 +17,7 @@ function EmployeeContent() {
   const [exitTime, setExitTime] = useState<"4:00" | "5:00" | "">("");
   const [exitSaved, setExitSaved] = useState(false);
 
+  const [exitCounts, setExitCounts] = useState({ early: 0, late: 0 });
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
@@ -43,7 +44,8 @@ function EmployeeContent() {
     fetch(`/api/sheets?scheduleDate=${TODAY}`)
       .then((r) => r.json())
       .then((d) => {
-        const mine = (d.schedule || []).find(
+        const schedule = d.schedule || [];
+        const mine = schedule.find(
           (s: { employeeName: string; exitTime: string }) =>
             s.employeeName === name
         );
@@ -51,6 +53,10 @@ function EmployeeContent() {
           setExitTime(mine.exitTime);
           setExitSaved(true);
         }
+        setExitCounts({
+          early: schedule.filter((s: { exitTime: string }) => s.exitTime === "4:00").length,
+          late: schedule.filter((s: { exitTime: string }) => s.exitTime === "5:00").length,
+        });
       });
 
   }, [name]);
@@ -150,6 +156,18 @@ function EmployeeContent() {
           >
             {attendanceSaved ? "تعديل الحضور" : "تسجيل الحضور"}
           </button>
+        </div>
+
+        {/* إحصائية الخروج */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-gray-800 rounded-2xl p-4 text-center">
+            <p className="text-blue-400 text-2xl font-bold">{exitCounts.early}</p>
+            <p className="text-gray-400 text-sm mt-1">يخرجون الساعة 4:00</p>
+          </div>
+          <div className="bg-gray-800 rounded-2xl p-4 text-center">
+            <p className="text-orange-400 text-2xl font-bold">{exitCounts.late}</p>
+            <p className="text-gray-400 text-sm mt-1">يخرجون الساعة 5:00</p>
+          </div>
         </div>
 
         {/* وقت الخروج */}
