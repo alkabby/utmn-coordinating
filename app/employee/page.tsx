@@ -81,6 +81,18 @@ function EmployeeContent() {
     showMsg("تم تسجيل الحضور");
   };
 
+  const refreshCounts = () => {
+    fetch(`/api/sheets?scheduleDate=${TODAY}`)
+      .then((r) => r.json())
+      .then((d) => {
+        const schedule = d.schedule || [];
+        setExitCounts({
+          early: schedule.filter((s: { exitTime: string }) => s.exitTime === "4:00").length,
+          late: schedule.filter((s: { exitTime: string }) => s.exitTime === "5:00").length,
+        });
+      });
+  };
+
   const saveExitTime = async (time: "4:00" | "5:00") => {
     setExitTime(time);
     await fetch("/api/sheets", {
@@ -94,6 +106,7 @@ function EmployeeContent() {
     });
     setExitSaved(true);
     showMsg("تم تسجيل وقت الخروج");
+    refreshCounts();
   };
 
   const showMsg = (text: string) => {
