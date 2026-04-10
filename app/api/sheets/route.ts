@@ -21,6 +21,27 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const sheets = await getSheets();
 
+    // جلب السجلات اليومية
+    const recordDate = searchParams.get("recordDate");
+    if (recordDate) {
+      const res = await sheets.spreadsheets.values.get({
+        spreadsheetId: SHEET_ID,
+        range: "Daily_Records!A2:F1000",
+      });
+      const rows = res.data.values || [];
+      const records = rows
+        .filter((r) => r[0] === recordDate)
+        .map((r) => ({
+          date: r[0],
+          employeeName: r[1],
+          attendance: r[2],
+          reason: r[3] || "",
+          exitTime: r[4] || "-",
+          time: r[5] || "",
+        }));
+      return NextResponse.json({ records });
+    }
+
     // جلب حضور يوم معين
     const attendanceDate = searchParams.get("attendanceDate");
     if (attendanceDate) {

@@ -8,11 +8,17 @@ type EmployeeStatus = { name: string; attendance: string; reason: string; exitTi
 
 const TODAY = new Date().toISOString().split("T")[0];
 
+type RecordRow = { employeeName: string; attendance: string; reason: string; exitTime: string; time: string };
+
 export default function AdminPage() {
+  const [tab, setTab] = useState<"live" | "records">("live");
   const [date, setDate] = useState(TODAY);
   const [data, setData] = useState<EmployeeStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState("");
+  const [recordDate, setRecordDate] = useState(TODAY);
+  const [records, setRecords] = useState<RecordRow[]>([]);
+  const [recordsLoading, setRecordsLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
 
@@ -58,6 +64,17 @@ export default function AdminPage() {
     return () => clearInterval(interval);
   }, [date, load]);
 
+  const loadRecords = useCallback(async (d: string) => {
+    setRecordsLoading(true);
+    const res = await fetch(`/api/sheets?recordDate=${d}`).then((r) => r.json());
+    setRecords(res.records || []);
+    setRecordsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (tab === "records") loadRecords(recordDate);
+  }, [tab, recordDate, loadRecords]);
+
   const counts = {
     present: data.filter((d) => d.attendance === "حاضر").length,
     excused: data.filter((d) => d.attendance === "مستأذن").length,
@@ -92,6 +109,68 @@ export default function AdminPage() {
     <main className="min-h-screen bg-gray-900 p-4" dir="rtl">
       <div className="max-w-2xl mx-auto space-y-4">
 
+        {/* تبويبين */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => setTab("live")}
+            className={`flex-1 py-3 rounded-xl font-bold text-sm transition ${tab === "live" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400 hover:bg-gray-700"}`}
+          >
+            البيانات الحية
+          </button>
+          <button
+            onClick={() => setTab("records")}
+            className={`flex-1 py-3 rounded-xl font-bold text-sm transition ${tab === "records" ? "bg-purple-600 text-white" : "bg-gray-800 text-gray-400 hover:bg-gray-700"}`}
+          >
+            السجلات السابقة
+          </button>
+        </div>
+
+        {tab === "records" ? (
+          <div className="space-y-4">
+            <div className="bg-gray-800 rounded-2xl p-5 flex items-center gap-3">
+              <label className="text-gray-400 text-sm shrink-0">التاريخ</label>
+              <input
+                type="date"
+                value={recordDate}
+                onChange={(e) => setRecordDate(e.target.value)}
+                className="flex-1 bg-gray-700 text-white rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+            <div className="bg-gray-800 rounded-2xl p-5">
+              <h2 className="text-white font-bold text-lg mb-4">سجل {recordDate}</h2>
+              {recordsLoading ? (
+                <p className="text-gray-400 text-center py-8">جاري التحميل...</p>
+              ) : records.length === 0 ? (
+                <p className="text-gray-500 text-center py-8">لا يوجد سجل لهذا اليوم</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {records.map((r, i) => (
+                    <div key={i} className={`rounded-xl px-4 py-3 flex items-center gap-3 bg-gray-700 ${
+                      r.attendance === "حاضر" ? "bg-green-900/30" : r.attendance === "مستأذن" ? "bg-yellow-900/30" : r.attendance === "غائب" ? "bg-red-900/30" : ""
+                    }`}>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-bold text-sm">{r.employeeName}</p>
+                        {r.reason && <p className="text-gray-400 text-xs mt-0.5">{r.reason}</p>}
+                        {r.time && <p className="text-gray-500 text-xs mt-0.5">سجّل حضور الساعة {r.time}</p>}
+                      </div>
+                      <span className={`text-sm font-bold shrink-0 ${
+                        r.attendance === "حاضر" ? "text-green-400" : r.attendance === "مستأذن" ? "text-yellow-400" : r.attendance === "غائب" ? "text-red-400" : "text-gray-500"
+                      }`}>
+                        {r.attendance === "حاضر" ? "✅ حاضر" : r.attendance === "مستأذن" ? "🟡 مستأذن" : r.attendance === "غائب" ? "❌ غائب" : "❓ لم يبلّغ"}
+                      </span>
+                      <span className={`text-xs font-bold px-2 py-1 rounded-lg shrink-0 ${
+                        r.exitTime === "4:00" ? "bg-blue-600 text-white" : r.exitTime === "5:00" ? "bg-orange-600 text-white" : "bg-gray-600 text-gray-400"
+                      }`}>
+                        {r.exitTime === "-" ? "—" : r.exitTime}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
         <div className="bg-gray-800 rounded-2xl p-5">
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -220,6 +299,9 @@ export default function AdminPage() {
             </div>
           )}
         </div>
+
+          </div>
+        )}
 
       </div>
     </main>
