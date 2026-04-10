@@ -155,6 +155,30 @@ export async function POST(req: Request) {
       }
     }
 
+    // حفظ سجل اليوم
+    if (body.action === "saveDailyRecord") {
+      const rows = body.records.map((r: { date: string; employeeName: string; attendance: string; reason: string; exitTime: string; time: string }) => [
+        r.date, r.employeeName, r.attendance, r.reason, r.exitTime, r.time,
+      ]);
+      // حذف سجلات نفس اليوم إن وجدت
+      const existing = await sheets.spreadsheets.values.get({
+        spreadsheetId: SHEET_ID,
+        range: "Daily_Records!A2:F1000",
+      });
+      const existingRows = existing.data.values || [];
+      const filtered = existingRows.filter((r) => r[0] !== body.date);
+      await sheets.spreadsheets.values.clear({ spreadsheetId: SHEET_ID, range: "Daily_Records!A2:F1000" });
+      const allRows = [...filtered, ...rows];
+      if (allRows.length > 0) {
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: SHEET_ID,
+          range: "Daily_Records!A2",
+          valueInputOption: "USER_ENTERED",
+          requestBody: { values: allRows },
+        });
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

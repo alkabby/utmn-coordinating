@@ -13,6 +13,8 @@ export default function AdminPage() {
   const [data, setData] = useState<EmployeeStatus[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveMsg, setSaveMsg] = useState("");
 
   const load = useCallback(async (d: string) => {
     setLoading(true);
@@ -90,22 +92,53 @@ export default function AdminPage() {
     <main className="min-h-screen bg-gray-900 p-4" dir="rtl">
       <div className="max-w-2xl mx-auto space-y-4">
 
-        <div className="bg-gray-800 rounded-2xl p-5 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">لوحة المنسق</h1>
-            {lastUpdate && (
-              <p className="text-gray-500 text-xs mt-1">
-                آخر تحديث: {lastUpdate}
-                {date === TODAY && " (يتحدث تلقائياً)"}
-              </p>
-            )}
+        <div className="bg-gray-800 rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <h1 className="text-2xl font-bold text-white">لوحة المنسق</h1>
+              {lastUpdate && (
+                <p className="text-gray-500 text-xs mt-1">
+                  آخر تحديث: {lastUpdate}
+                  {date === TODAY && " (يتحدث تلقائياً)"}
+                </p>
+              )}
+            </div>
+            <button
+              onClick={() => load(date)}
+              className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm transition"
+            >
+              تحديث
+            </button>
           </div>
           <button
-            onClick={() => load(date)}
-            className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-xl text-sm transition"
+            onClick={async () => {
+              setSaving(true);
+              await fetch("/api/sheets", {
+                method: "POST",
+                body: JSON.stringify({
+                  action: "saveDailyRecord",
+                  date,
+                  records: data.map((e) => ({
+                    date,
+                    employeeName: e.name,
+                    attendance: e.attendance,
+                    reason: e.reason,
+                    exitTime: e.exitTime,
+                    time: e.time,
+                  })),
+                }),
+              });
+              setSaving(false);
+              setSaveMsg("تم حفظ سجل اليوم ✅");
+              setTimeout(() => setSaveMsg(""), 3000);
+            }}
+            className="w-full bg-green-700 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition"
           >
-            تحديث
+            {saving ? "جاري الحفظ..." : "حفظ سجل اليوم"}
           </button>
+          {saveMsg && (
+            <p className="text-green-400 text-center text-sm mt-2">{saveMsg}</p>
+          )}
         </div>
 
         <div className="bg-gray-800 rounded-2xl p-4">
