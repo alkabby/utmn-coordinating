@@ -10,13 +10,12 @@ export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [adminPass, setAdminPass] = useState("");
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
-  const [showInstall, setShowInstall] = useState(false);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
 
   useEffect(() => {
     const handler = (e: Event) => {
       e.preventDefault();
       setInstallPrompt(e);
-      setShowInstall(true);
     };
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
@@ -79,16 +78,25 @@ export default function Home() {
             >
               دخول المنسق
             </button>
-            {showInstall && (
-              <button
-                onClick={() => {
+            <button
+              onClick={() => {
+                if (installPrompt) {
                   (installPrompt as unknown as { prompt: () => void }).prompt();
-                  setShowInstall(false);
-                }}
-                className="w-full bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 rounded-xl transition text-sm flex items-center justify-center gap-2"
-              >
-                📲 إضافة التطبيق للشاشة الرئيسية
-              </button>
+                } else {
+                  setShowInstallGuide(!showInstallGuide);
+                }
+              }}
+              className="w-full bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 rounded-xl transition text-sm flex items-center justify-center gap-2"
+            >
+              📲 إضافة التطبيق للشاشة الرئيسية
+            </button>
+            {showInstallGuide && (
+              <div className="bg-gray-700 rounded-xl p-4 text-gray-300 text-sm space-y-2">
+                <p className="font-semibold text-white">كيف تضيف التطبيق:</p>
+                <p>١. اضغط على زر المشاركة <span className="text-lg">⬆️</span> في أسفل Safari</p>
+                <p>٢. اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong></p>
+                <p>٣. اضغط <strong>"إضافة"</strong></p>
+              </div>
             )}
           </div>
         ) : (
