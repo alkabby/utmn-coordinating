@@ -78,18 +78,33 @@ export default function Home() {
             >
               دخول المنسق
             </button>
-            <button
-              onClick={() => {
-                if (installPrompt) {
-                  (installPrompt as unknown as { prompt: () => void }).prompt();
-                } else {
-                  setShowInstallGuide(!showInstallGuide);
-                }
-              }}
-              className="w-full bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 rounded-xl transition text-sm flex items-center justify-center gap-2"
-            >
-              📲 إضافة التطبيق للشاشة الرئيسية
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  if (installPrompt) {
+                    (installPrompt as unknown as { prompt: () => void }).prompt();
+                  } else {
+                    setShowInstallGuide(!showInstallGuide);
+                  }
+                }}
+                className="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 rounded-xl transition text-sm flex items-center justify-center gap-2"
+              >
+                📲 إضافة للشاشة الرئيسية
+              </button>
+              {typeof navigator !== "undefined" && "share" in navigator && (
+                <button
+                  onClick={() =>
+                    navigator.share({
+                      title: "UTMN Coordinating System",
+                      url: window.location.href,
+                    })
+                  }
+                  className="bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 px-4 rounded-xl transition text-sm"
+                >
+                  ⬆️
+                </button>
+              )}
+            </div>
             {showInstallGuide && (
               <div className="bg-gray-700 rounded-xl p-4 text-gray-300 text-sm space-y-2">
                 <p className="font-semibold text-white">كيف تضيف التطبيق:</p>
