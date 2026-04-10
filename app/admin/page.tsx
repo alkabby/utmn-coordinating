@@ -115,7 +115,7 @@ export default function AdminPage() {
             onClick={() => setTab("live")}
             className={`flex-1 py-3 rounded-xl font-bold text-sm transition ${tab === "live" ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400 hover:bg-gray-700"}`}
           >
-            البيانات الحية
+            سجل اليوم
           </button>
           <button
             onClick={() => setTab("records")}
