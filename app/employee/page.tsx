@@ -171,18 +171,6 @@ function EmployeeContent() {
           </button>
         </div>
 
-        {/* إحصائية الخروج */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-gray-800 rounded-2xl p-4 text-center">
-            <p className="text-blue-400 text-2xl font-bold">{exitCounts.early}</p>
-            <p className="text-gray-400 text-sm mt-1">يخرجون الساعة 4:00</p>
-          </div>
-          <div className="bg-gray-800 rounded-2xl p-4 text-center">
-            <p className="text-orange-400 text-2xl font-bold">{exitCounts.late}</p>
-            <p className="text-gray-400 text-sm mt-1">يخرجون الساعة 5:00</p>
-          </div>
-        </div>
-
         {/* وقت الخروج */}
         <div className="bg-gray-800 rounded-2xl p-5">
           <h2 className="text-white font-bold text-lg mb-1">وقت الخروج</h2>
@@ -218,6 +206,16 @@ function EmployeeContent() {
             >
               5:00
             </button>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            <div className="bg-gray-700 rounded-xl p-3 text-center">
+              <p className="text-blue-400 text-xl font-bold">{exitCounts.early}</p>
+              <p className="text-gray-400 text-xs mt-1">يخرجون 4:00</p>
+            </div>
+            <div className="bg-gray-700 rounded-xl p-3 text-center">
+              <p className="text-orange-400 text-xl font-bold">{exitCounts.late}</p>
+              <p className="text-gray-400 text-xs mt-1">يخرجون 5:00</p>
+            </div>
           </div>
         </div>
 
