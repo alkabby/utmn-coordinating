@@ -121,12 +121,14 @@ function EmployeeContent() {
 
         {/* الهيدر */}
         <div className="bg-gray-800 rounded-2xl p-5">
-          <button
-            onClick={() => router.push("/")}
-            className="bg-gray-700 hover:bg-gray-600 text-white text-sm mb-4 flex items-center gap-2 px-4 py-2 rounded-xl transition w-fit"
-          >
-            ← رجوع للرئيسية
-          </button>
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={() => router.push("/")}
+              className="bg-gray-700 hover:bg-gray-600 text-white text-sm flex items-center gap-2 px-4 py-2 rounded-xl transition"
+            >
+              ← رجوع للرئيسية
+            </button>
+          </div>
           <p className="text-gray-400 text-sm">مرحبا</p>
           <h1 className="text-2xl font-bold text-white">{name}</h1>
           <p className="text-gray-500 text-xs mt-1">{TODAY}</p>
