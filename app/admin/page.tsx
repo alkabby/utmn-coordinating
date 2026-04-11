@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 type Employee = { id: string; name: string; status: string };
 type AttendanceRow = { employeeName: string; status: string; reason: string; timestamp: string };
@@ -11,6 +12,7 @@ const TODAY = new Date().toISOString().split("T")[0];
 type RecordRow = { employeeName: string; attendance: string; reason: string; exitTime: string; time: string };
 
 export default function AdminPage() {
+  const router = useRouter();
   const [tab, setTab] = useState<"live" | "records">("live");
   const [date, setDate] = useState(TODAY);
   const [data, setData] = useState<EmployeeStatus[]>([]);
@@ -108,6 +110,14 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-gray-900 p-4" dir="rtl">
       <div className="max-w-2xl mx-auto space-y-4">
+
+        {/* رجوع */}
+        <button
+          onClick={() => router.push("/")}
+          className="text-gray-400 hover:text-white text-sm flex items-center gap-1 transition"
+        >
+          ← رجوع
+        </button>
 
         {/* تبويبين */}
         <div className="flex gap-2">

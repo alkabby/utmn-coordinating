@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 
 const TODAY = new Date().toISOString().split("T")[0];
@@ -8,6 +8,7 @@ const TODAY = new Date().toISOString().split("T")[0];
 function EmployeeContent() {
   const params = useSearchParams();
   const name = params.get("name") || "";
+  const router = useRouter();
 
   const [attendance, setAttendance] = useState<"حاضر" | "مستأذن" | "غائب" | "">("");
   const [reason, setReason] = useState("");
@@ -120,6 +121,12 @@ function EmployeeContent() {
 
         {/* الهيدر */}
         <div className="bg-gray-800 rounded-2xl p-5">
+          <button
+            onClick={() => router.push("/")}
+            className="text-gray-400 hover:text-white text-sm mb-3 flex items-center gap-1 transition"
+          >
+            ← رجوع
+          </button>
           <p className="text-gray-400 text-sm">مرحبا</p>
           <h1 className="text-2xl font-bold text-white">{name}</h1>
           <p className="text-gray-500 text-xs mt-1">{TODAY}</p>
