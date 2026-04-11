@@ -11,6 +11,8 @@ export default function Home() {
   const [adminPass, setAdminPass] = useState("");
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
   const [showInstallGuide, setShowInstallGuide] = useState(false);
+  const [showPass, setShowPass] = useState(false);
+  const [savedPass, setSavedPass] = useState("");
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -19,6 +21,11 @@ export default function Home() {
     };
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("adminPass");
+    if (saved) { setSavedPass(saved); setAdminPass(saved); }
   }, []);
   const router = useRouter();
 
@@ -105,21 +112,45 @@ export default function Home() {
               <label className="text-gray-300 text-sm mb-2 block">
                 كلمة مرور المنسق
               </label>
-              <input
-                type="password"
-                value={adminPass}
-                onChange={(e) => setAdminPass(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAdmin()}
-                placeholder="••••••••"
-                className="w-full bg-gray-700 text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500"
-              />
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"}
+                  value={adminPass}
+                  onChange={(e) => setAdminPass(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAdmin()}
+                  placeholder="••••••••"
+                  className="w-full bg-gray-700 text-white rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500 pl-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition text-lg"
+                >
+                  {showPass ? "🙈" : "👁️"}
+                </button>
+              </div>
             </div>
-            <button
-              onClick={handleAdmin}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition"
-            >
-              دخول
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleAdmin}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition"
+              >
+                دخول
+              </button>
+              <button
+                onClick={() => {
+                  localStorage.setItem("adminPass", adminPass);
+                  setSavedPass(adminPass);
+                  alert("تم حفظ كلمة المرور");
+                }}
+                className="bg-gray-700 hover:bg-gray-600 text-gray-300 px-4 py-3 rounded-xl transition text-sm"
+              >
+                حفظ
+              </button>
+            </div>
+            {savedPass && (
+              <p className="text-gray-500 text-xs text-center">كلمة المرور محفوظة على هذا الجهاز</p>
+            )}
             <button
               onClick={() => { setShowAdmin(false); setAdminPass(""); }}
               className="w-full bg-gray-700 hover:bg-gray-600 text-gray-400 py-2 rounded-xl transition text-sm"
