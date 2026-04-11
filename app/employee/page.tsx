@@ -123,9 +123,9 @@ function EmployeeContent() {
         <div className="bg-gray-800 rounded-2xl p-5">
           <button
             onClick={() => router.push("/")}
-            className="text-gray-400 hover:text-white text-sm mb-3 flex items-center gap-1 transition"
+            className="bg-gray-700 hover:bg-gray-600 text-white text-sm mb-4 flex items-center gap-2 px-4 py-2 rounded-xl transition w-fit"
           >
-            ← رجوع
+            ← رجوع للرئيسية
           </button>
           <p className="text-gray-400 text-sm">مرحبا</p>
           <h1 className="text-2xl font-bold text-white">{name}</h1>
