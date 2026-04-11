@@ -145,7 +145,7 @@ export default function Home() {
                 }}
                 className="bg-gray-700 hover:bg-gray-600 text-gray-300 px-4 py-3 rounded-xl transition text-sm"
               >
-                حفظ
+                حفظ كلمة المرور
               </button>
             </div>
             {savedPass && (
